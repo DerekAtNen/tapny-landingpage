@@ -8,9 +8,12 @@ window.Webflow.push(() => {
   const calendarElement = document.getElementById<HTMLDivElement>('calendar-container');
   if (!calendarElement) return;
 
-  console.log(calendarElement);
+  // console.log(calendarElement);
 
   const calendarEl = calendarElement;
+  const events = getEvents();
+  // console.log(events);
+
   const calendar = new Calendar(calendarEl, {
     plugins: [dayGridPlugin, timeGridPlugin, listPlugin],
     initialView: 'dayGridMonth',
@@ -19,6 +22,20 @@ window.Webflow.push(() => {
       center: 'title',
       right: 'dayGridMonth,timeGridWeek,listWeek',
     },
+    events,
   });
   calendar.render();
 });
+
+const getEvents = () => {
+  const scripts = document.querySelectorAll('[data-element="event-data"]');
+  // console.log(scripts);
+  const events = [...scripts].map((script) => {
+    const event = JSON.parse(script.textContent);
+    event.start = new Date(event.start);
+    event.start = new Date(event.end);
+    return event;
+  });
+  // console.log(events);
+  return events;
+};
