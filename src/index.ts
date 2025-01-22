@@ -12,6 +12,7 @@ window.Webflow.push(() => {
 
   const calendarEl = calendarElement;
   const events = getEvents();
+  const styles = window.getComputedStyle(document.body);
   // console.log(events);
 
   const calendar = new Calendar(calendarEl, {
@@ -20,9 +21,17 @@ window.Webflow.push(() => {
     headerToolbar: {
       left: 'prev,next today',
       center: 'title',
-      right: 'dayGridMonth,timeGridWeek,listWeek',
+      right: 'dayGridMonth,timeGridWeek',
     },
     events,
+    eventColor: styles.getPropertyValue('--base-color-brand--green'),
+    eventClick: function (info) {
+      info.jsEvent.preventDefault(); // don't let the browser navigate
+
+      if (info.event.url) {
+        window.open(info.event.url);
+      }
+    },
   });
   calendar.render();
 });
@@ -33,7 +42,7 @@ const getEvents = () => {
   const events = [...scripts].map((script) => {
     const event = JSON.parse(script.textContent);
     event.start = new Date(event.start);
-    event.start = new Date(event.end);
+    event.end = new Date(event.end);
     return event;
   });
   // console.log(events);
